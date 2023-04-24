@@ -5,8 +5,8 @@ class Nvimpager < Formula
   sha256 "8159324c3ef564a773d279eae5fec1708bf7632dcbe41f6e20509623f830a222"
   license ""
 
-  depends_on "bash"
   depends_on "scdoc" => :build
+  depends_on "bash"
   depends_on "neovim"
 
   def install
