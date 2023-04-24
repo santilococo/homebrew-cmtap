@@ -24,7 +24,7 @@ brew install nvimpager
 or, to avoid conflicts with the core repository:
 
 ```
-brew install cmtap/nvimpager
+brew install santilococo/cmtap/nvimpager
 ```
 
 ## Contributing <a name="contributing"></a>
