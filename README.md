@@ -15,7 +15,7 @@ First, you need to install the tap:
 brew tap santilococo/cmtap
 ```
 
-Then, to install, for example `nvimpager`:
+Then, to install `nvimpager`, for example, you need to run:
 
 ```
 brew install nvimpager
