@@ -1,6 +1,6 @@
 cask "mpv" do
   version "0.37.0"
-  sha256 "74e9bc0ac4d5476ac83c6c516bf000523ae58a688c21ab10f5503692db7ab0bf"
+  sha256 "3ad2dd8f4475e0595ec775c4a872ecf4f8cf076808185ce03c9bf7aff7f750eb"
 
   url "https://github.com/santilococo/cmbuilder/releases/download/mpv-v#{version}/mpv.tar.gz"
   name "mpv"
