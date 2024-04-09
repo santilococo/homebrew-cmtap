@@ -1,8 +1,8 @@
 class Cbattery < Formula
   desc "Manage battery-related settings on Apple Silicon systems"
   homepage "https://git.slc.ar/slococo/cbattery"
-  url "https://git.slc.ar/slococo/cbattery/archive/v0.8.tar.gz"
-  sha256 "f3681dafa8dfef4203615e33f89c57d69c54a5dd37d6c0d50b92be089b909940"
+  url "https://git.slc.ar/slococo/cbattery/archive/v1.2.tar.gz"
+  sha256 "8691dcb08140ecb8ab4e766d470e09f26f1b26ff79b2ce8929484ba36f516e5b"
   license "GPL-2.0"
 
   depends_on arch: :arm64
@@ -11,7 +11,7 @@ class Cbattery < Formula
   def install
     system "make", "PREFIX=#{prefix}", "install"
     pkgshare.install "#{buildpath}/.visudo"
-    inreplace "#{bin}/cbattery", /\.visudo/, "#{opt_pkgshare}/.visudo"
+    inreplace "#{bin}/cbattery", /\/usr\/local\/share\/cbattery/, "#{opt_pkgshare}"
   end
 
   def caveats
