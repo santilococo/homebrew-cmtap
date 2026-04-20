@@ -1,0 +1,70 @@
+name: Update homebrew formulas
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        formula:
+          - cliphist
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install homebrew
+        run: |
+          NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH
+
+      - name: Run livecheck
+        id: check
+        run: |
+          set -eux
+          NAME="${{ matrix.formula }}"
+          FILE="Formula/${NAME}.rb"
+          echo "Checking $NAME"
+          json=$(brew livecheck --json "$NAME")
+          latest=$(echo "$json" | jq -r '.formulae[0].version.latest')
+          current=$(echo "$json" | jq -r '.formulae[0].version.current')
+          outdated=$(echo "$json" | jq -r '.formulae[0].version.outdated')
+          echo "current=$current"
+          echo "latest=$latest"
+          if [ "$outdated" != "true" ]; then
+            echo "up_to_date=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "up_to_date=false" >> $GITHUB_OUTPUT
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+
+      - name: Update formula
+        if: steps.check.outputs.up_to_date == 'false'
+        run: |
+          set -eux
+          NAME="${{ matrix.formula }}"
+          FILE="Formula/${NAME}.rb"
+          latest="${{ steps.check.outputs.latest }}"
+          echo "Updating $NAME to $latest"
+          url_template=$(grep '^  url "' "$FILE" | sed -E 's/.*"(.*)".*/\1/')
+          new_url=$(echo "$url_template" | sed "s/#{version}/$latest/g")
+          echo "Downloading $new_url"
+          sha=$(curl -L "$new_url" | sha256sum | awk '{print $1}')
+          sed -i "s|^  version \".*\"|  version \"$latest\"|" "$FILE"
+          sed -i "s|^  sha256 \".*\"|  sha256 \"$sha\"|" "$FILE"
+
+      - name: Commit changes
+        if: steps.check.outputs.up_to_date == 'false'
+        run: |
+          set -eux
+          git config --local user.name "$(git log --format=%an | head -n 1)"
+          git config --local user.email "$(git log --format=%ae | head -n 1)"
+          git add Formula/${{ matrix.formula }}.rb
+          git commit -m "Update ${{ matrix.formula }} to ${{ steps.check.outputs.latest }}" || exit 0
+          git push
