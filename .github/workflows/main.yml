@@ -31,11 +31,8 @@ jobs:
           NAME="${{ matrix.formula }}"
           FILE="Formula/${NAME}.rb"
           echo "Checking $NAME"
-          # export HOMEBREW_DEVELOPER="true"
-          # git config --global user.name "$(git log --format=%an | head -n 1)"
-          # git config --global user.email "$(git log --format=%ae | head -n 1)"
           brew tap "$GITHUB_REPOSITORY"
-          json=$(brew livecheck --json "local/cmtap/$NAME")
+          json=$(brew livecheck --json "$NAME")
           latest=$(echo "$json" | jq -r '.formulae[0].version.latest')
           current=$(echo "$json" | jq -r '.formulae[0].version.current')
           outdated=$(echo "$json" | jq -r '.formulae[0].version.outdated')
