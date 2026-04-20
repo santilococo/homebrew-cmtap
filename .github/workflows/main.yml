@@ -29,7 +29,9 @@ jobs:
         run: |
           set -eux
           NAME="${{ matrix.formula }}"
-          FILE="Formula/${NAME}.rb"
+          echo "$PWD"
+          ls "$PWD"
+          FILE="$PWD/Formula/${NAME}.rb"
           echo "Checking $NAME"
           export HOMEBREW_DEVELOPER="true"
           json=$(brew livecheck --json "$FILE")
