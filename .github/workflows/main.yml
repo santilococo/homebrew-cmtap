@@ -31,7 +31,7 @@ jobs:
           NAME="${{ matrix.formula }}"
           FILE="Formula/${NAME}.rb"
           echo "Checking $NAME"
-          HOMEBREW_DEVELOPER="true"
+          export HOMEBREW_DEVELOPER="true"
           json=$(brew livecheck --json "$FILE")
           latest=$(echo "$json" | jq -r '.formulae[0].version.latest')
           current=$(echo "$json" | jq -r '.formulae[0].version.current')
