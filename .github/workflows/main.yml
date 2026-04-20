@@ -29,12 +29,10 @@ jobs:
         run: |
           set -eux
           NAME="${{ matrix.formula }}"
-          echo "$PWD"
-          ls "$PWD"
-          FILE="$PWD/Formula/${NAME}.rb"
+          FILE="Formula/${NAME}.rb"
           echo "Checking $NAME"
           export HOMEBREW_DEVELOPER="true"
-          json=$(brew livecheck --json "$FILE")
+          json=$(brew livecheck --tap=. --json "$FILE")
           latest=$(echo "$json" | jq -r '.formulae[0].version.latest')
           current=$(echo "$json" | jq -r '.formulae[0].version.current')
           outdated=$(echo "$json" | jq -r '.formulae[0].version.outdated')
