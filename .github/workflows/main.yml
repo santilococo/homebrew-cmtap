@@ -33,9 +33,9 @@ jobs:
           echo "Checking $NAME"
           brew tap "$GITHUB_REPOSITORY"
           json=$(brew livecheck --json "$NAME")
-          latest=$(echo "$json" | jq -r '.formulae[0].version.latest')
-          current=$(echo "$json" | jq -r '.formulae[0].version.current')
-          outdated=$(echo "$json" | jq -r '.formulae[0].version.outdated')
+          latest=$(echo "$json" | jq -r '.[0].version.latest')
+          current=$(echo "$json" | jq -r '.[0].version.current')
+          outdated=$(echo "$json" | jq -r '.[0].version.outdated')
           echo "current=$current"
           echo "latest=$latest"
           if [ "$outdated" != "true" ]; then
