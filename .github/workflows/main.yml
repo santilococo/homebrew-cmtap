@@ -32,8 +32,8 @@ jobs:
           FILE="Formula/${NAME}.rb"
           echo "Checking $NAME"
           # export HOMEBREW_DEVELOPER="true"
-          git config --local user.name "$(git log --format=%an | head -n 1)"
-          git config --local user.email "$(git log --format=%ae | head -n 1)"
+          git config --global user.name "$(git log --format=%an | head -n 1)"
+          git config --global user.email "$(git log --format=%ae | head -n 1)"
           brew tap-new local/cmtap
           brew tap local/cmtap "$PWD"
           json=$(brew livecheck --json "local/cmtap/$NAME")
