@@ -26,12 +26,13 @@ jobs:
 
       - name: Run livecheck
         id: check
+        env:
+          NAME: "${{ matrix.formula }}"
         run: |
           set -eux
-          NAME="${{ matrix.formula }}"
           FILE="Formula/${NAME}.rb"
           brew tap "$GITHUB_REPOSITORY"
-          json=$(brew livecheck --json "$NAME")
+          json=$(brew livecheck --json "${NAME}")
           latest=$(echo "$json" | jq -r '.[0].version.latest')
           current=$(echo "$json" | jq -r '.[0].version.current')
           outdated=$(echo "$json" | jq -r '.[0].version.outdated')
@@ -44,11 +45,13 @@ jobs:
 
       - name: Update formula
         if: steps.check.outputs.up_to_date == 'false'
+        env:
+          NAME: "${{ matrix.formula }}"
+          STEPS_CHECK_OUTPUTS_LATEST: ${{ steps.check.outputs.latest }}
         run: |
           set -eux
-          NAME="${{ matrix.formula }}"
           FILE="Formula/${NAME}.rb"
-          latest="${{ steps.check.outputs.latest }}"
+          latest="${STEPS_CHECK_OUTPUTS_LATEST}"
           url_template=$(grep '^  url "' "$FILE" | sed -E 's/.*"(.*)".*/\1/')
           new_url=$(echo "$url_template" | sed "s/#{version}/$latest/g")
           sha=$(curl -L "$new_url" | sha256sum | awk '{print $1}')
@@ -57,10 +60,13 @@ jobs:
 
       - name: Commit changes
         if: steps.check.outputs.up_to_date == 'false'
+        env:
+          NAME: "${{ matrix.formula }}"
+          STEPS_CHECK_OUTPUTS_LATEST: ${{ steps.check.outputs.latest }}
         run: |
           set -eux
           git config --local user.name "$(git log --format=%an | head -n 1)"
           git config --local user.email "$(git log --format=%ae | head -n 1)"
-          git add Formula/${{ matrix.formula }}.rb
-          git commit -m "Update ${{ matrix.formula }} to ${{ steps.check.outputs.latest }}" || exit 0
+          git add Formula/${NAME}.rb
+          git commit -m "Update ${NAME} to ${STEPS_CHECK_OUTPUTS_LATEST}" || exit 0
           git push
