@@ -12,8 +12,6 @@ cask "mpv" do
     regex(/^mpv[._-]v?(\d+(?:\.\d+)+)$/i)
   end
 
-  conflicts_with formula: "mpv"
-
   app "mpv.app"
   binary "#{appdir}/mpv.app/Contents/MacOS/mpv"
   manpage "mpv.1"
