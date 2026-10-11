@@ -22,6 +22,8 @@ class Waypipe < Formula
   license "MIT"
 
   def install
+    system "rpm2cpio '#{cached_download}' | cpio -idmv"
+
     bin.install "usr/bin/waypipe"
   end
 end
